@@ -1,9 +1,15 @@
-import ThreeBackground from '@/components/three-background';
+'use client';
+
+import dynamic from 'next/dynamic';
 import DeveloperSection from '@/components/developer-section';
 import ArtistSection from '@/components/artist-section';
 import ContactSection from '@/components/contact-section';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
+
+const ThreeBackground = dynamic(() => import('@/components/three-background'), {
+  ssr: false,
+});
 
 export default function Home() {
   return (

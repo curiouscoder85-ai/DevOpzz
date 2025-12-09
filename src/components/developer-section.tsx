@@ -1,63 +1,18 @@
 'use client';
 
-import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import { profile, projects } from '@/lib/data';
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import ProjectCard from './project-card';
-import TechStackVisualizer from './tech-stack-visualizer';
 import SocialLinks from './social-links';
-import { useEffect, useState } from 'react';
+import { useTypewriter } from '@/hooks/use-typewriter';
+import { useCyclingTypewriter } from '@/hooks/use-cycling-typewriter';
 
-const useTypewriter = (text: string, speed = 50) => {
-  const [displayText, setDisplayText] = useState('');
-
-  useEffect(() => {
-    let i = 0;
-    const typingInterval = setInterval(() => {
-      if (i < text.length) {
-        setDisplayText(text.substring(0, i + 1));
-        i++;
-      } else {
-        clearInterval(typingInterval);
-      }
-    }, speed);
-
-    return () => clearInterval(typingInterval);
-  }, [text, speed]);
-
-  return displayText;
-};
-
-const useCyclingTypewriter = (words: string[], typeSpeed = 100, deleteSpeed = 50, delay = 2000) => {
-  const [text, setText] = useState('');
-  const [index, setIndex] = useState(0);
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  useEffect(() => {
-    const handleTyping = () => {
-      const currentWord = words[index];
-      if (isDeleting) {
-        setText(currentWord.substring(0, text.length - 1));
-      } else {
-        setText(currentWord.substring(0, text.length + 1));
-      }
-
-      if (!isDeleting && text === currentWord) {
-        setTimeout(() => setIsDeleting(true), delay);
-      } else if (isDeleting && text === '') {
-        setIsDeleting(false);
-        setIndex((prevIndex) => (prevIndex + 1) % words.length);
-      }
-    };
-
-    const speed = isDeleting ? deleteSpeed : typeSpeed;
-    const timeout = setTimeout(handleTyping, speed);
-    return () => clearTimeout(timeout);
-  }, [text, isDeleting, index, words, typeSpeed, deleteSpeed, delay]);
-
-  return text;
-};
+const TechStackVisualizer = dynamic(() => import('./tech-stack-visualizer'), {
+    ssr: false,
+    loading: () => <div className="bg-card/30 backdrop-blur-sm border-primary/20 aspect-video w-full rounded-lg" />
+});
 
 
 export default function DeveloperSection() {
@@ -70,7 +25,7 @@ export default function DeveloperSection() {
       <Card className="bg-card/50 backdrop-blur-sm p-6 border-border">
         <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6">
           <Avatar className="h-24 w-24 border-2 border-primary">
-            <AvatarImage src={profile.imageUrl} alt={profile.name} />
+            <AvatarImage src={profile.imageUrl} alt={profile.name} data-ai-hint={profile.imageHint} />
             <AvatarFallback>{profile.name.substring(0, 2)}</AvatarFallback>
           </Avatar>
           <div className="text-center sm:text-left min-h-[120px]">
