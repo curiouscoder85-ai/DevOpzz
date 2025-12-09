@@ -29,10 +29,41 @@ const useTypewriter = (text: string, speed = 50) => {
   return displayText;
 };
 
+const useCyclingTypewriter = (words: string[], typeSpeed = 100, deleteSpeed = 50, delay = 2000) => {
+  const [text, setText] = useState('');
+  const [index, setIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const handleTyping = () => {
+      const currentWord = words[index];
+      if (isDeleting) {
+        setText(currentWord.substring(0, text.length - 1));
+      } else {
+        setText(currentWord.substring(0, text.length + 1));
+      }
+
+      if (!isDeleting && text === currentWord) {
+        setTimeout(() => setIsDeleting(true), delay);
+      } else if (isDeleting && text === '') {
+        setIsDeleting(false);
+        setIndex((prevIndex) => (prevIndex + 1) % words.length);
+      }
+    };
+
+    const speed = isDeleting ? deleteSpeed : typeSpeed;
+    const timeout = setTimeout(handleTyping, speed);
+    return () => clearTimeout(timeout);
+  }, [text, isDeleting, index, words, typeSpeed, deleteSpeed, delay]);
+
+  return text;
+};
+
 
 export default function DeveloperSection() {
     const name = useTypewriter(profile.name);
-    const bio = useTypewriter(profile.bio, 25);
+    const bioRoles = ["full stack developer", "artist", "photographer"];
+    const cyclingBio = useCyclingTypewriter(bioRoles);
 
   return (
     <section className="space-y-12 py-12">
@@ -44,7 +75,10 @@ export default function DeveloperSection() {
           </Avatar>
           <div className="text-center sm:text-left min-h-[120px]">
             <h1 className="text-3xl font-headline font-bold text-primary min-h-[40px]">{name}</h1>
-            <p className="text-muted-foreground mt-1 max-w-md min-h-[48px]">{bio}</p>
+            <p className="text-muted-foreground mt-1 max-w-md min-h-[24px] capitalize">
+                {cyclingBio}
+                <span className="animate-ping">|</span>
+            </p>
             <SocialLinks links={profile.socials} />
           </div>
         </div>

@@ -63,7 +63,7 @@ export const artworks = [
 
 export const profile = {
   name: "Pranav S Prasad",
-  bio: "Full-stack developer and digital artist, crafting immersive digital experiences where technology and creativity intersect.",
+  bio: "",
   imageUrl: PlaceHolderImages.find(p => p.id === 'profile-picture')?.imageUrl || '',
   imageHint: PlaceHolderImages.find(p => p.id === 'profile-picture')?.imageHint || '',
   socials: [
