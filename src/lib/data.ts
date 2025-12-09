@@ -3,11 +3,12 @@ import { PlaceHolderImages } from './placeholder-images';
 export const projects = [
   {
     id: 'proj-1',
-    title: 'QuantumLeap CRM',
-    description: 'A futuristic CRM platform designed for startups, focusing on AI-driven analytics and a seamless user experience.',
-    tech: ['React', 'Firebase', 'MERN'],
+    title: 'ResumeBuilder',
+    description: 'A resume builder application built with Python and Django, designed to streamline the process of creating professional resumes.',
+    tech: ['Python', 'Django'],
     imageUrl: PlaceHolderImages.find(p => p.id === 'project-1')?.imageUrl || '',
     imageHint: PlaceHolderImages.find(p => p.id === 'project-1')?.imageHint || '',
+    link: 'https://github.com/CodingIntermediate/rbuilder',
   },
   {
     id: 'proj-2',
