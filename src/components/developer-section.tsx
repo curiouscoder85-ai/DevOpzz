@@ -46,8 +46,8 @@ export default function DeveloperSection() {
 
       <div className="space-y-8">
          <h2 className="text-2xl font-headline font-bold text-center text-primary">Featured Projects</h2>
-        {projects.map((project, index) => (
-          <ProjectCard key={project.id} project={project} index={index} />
+        {projects.map((project) => (
+          <ProjectCard key={project.id} project={project} />
         ))}
       </div>
     </section>
