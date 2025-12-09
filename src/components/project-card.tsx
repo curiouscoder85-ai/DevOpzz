@@ -49,7 +49,7 @@ export default function ProjectCard({ project }: { project: Project }) {
   const CardInner = () => (
     <div
       ref={cardRef}
-      className="group relative overflow-hidden bg-card/80 backdrop-blur-lg border-border transition-transform duration-100 will-change-transform h-full flex flex-col hover:shadow-2xl hover:shadow-primary/10"
+      className="group relative overflow-hidden bg-card/80 backdrop-blur-lg border-border transition-transform duration-100 will-change-transform h-full flex flex-col hover:shadow-2xl hover:shadow-primary/10 rounded-lg"
       style={{ 
         transformStyle: 'preserve-3d',
         transform: 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)',
@@ -84,7 +84,7 @@ export default function ProjectCard({ project }: { project: Project }) {
 
   if (project.link) {
     return (
-      <Link href={project.link} target="_blank" rel="noopener noreferrer" className="block h-full transition-transform duration-300 ease-in-out hover:-translate-y-1">
+      <Link href={project.link} target="_blank" rel="noopener noreferrer" className="block h-full transition-transform duration-300 ease-in-out hover:-translate-y-1" style={{transformStyle: "preserve-3d"}}>
         <CardInner />
       </Link>
     );
