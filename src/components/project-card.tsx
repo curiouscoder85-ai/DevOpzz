@@ -26,8 +26,8 @@ export default function ProjectCard({ project, index }: { project: Project; inde
       const { left, top, width, height } = card.getBoundingClientRect();
       const x = e.clientX - left - width / 2;
       const y = e.clientY - top - height / 2;
-      const rotateX = (y / height) * -30;
-      const rotateY = (x / width) * 30;
+      const rotateX = (y / height) * -20;
+      const rotateY = (x / width) * 20;
       card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
     };
 
@@ -35,29 +35,36 @@ export default function ProjectCard({ project, index }: { project: Project; inde
       card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
     };
 
-    card.addEventListener('mousemove', handleMouseMove);
-    card.addEventListener('mouseleave', handleMouseLeave);
-
-    return () => {
-      card.removeEventListener('mousemove', handleMouseMove);
-      card.removeEventListener('mouseleave', handleMouseLeave);
-    };
-  }, []);
+    if (project.link) {
+      const parent = card.parentElement;
+      if (parent) {
+        parent.addEventListener('mousemove', handleMouseMove);
+        parent.addEventListener('mouseleave', handleMouseLeave);
+        return () => {
+          parent.removeEventListener('mousemove', handleMouseMove);
+          parent.removeEventListener('mouseleave', handleMouseLeave);
+        };
+      }
+    } else {
+      card.addEventListener('mousemove', handleMouseMove);
+      card.addEventListener('mouseleave', handleMouseLeave);
+      return () => {
+        card.removeEventListener('mousemove', handleMouseMove);
+        card.removeEventListener('mouseleave', handleMouseLeave);
+      };
+    }
+  }, [project.link]);
 
   const CardInner = () => (
     <Card
       ref={cardRef}
-      className="group relative overflow-hidden bg-card/30 backdrop-blur-lg border-primary/20 transition-all duration-300 will-change-transform h-full flex flex-col hover:shadow-2xl hover:shadow-accent/20"
+      className="group relative overflow-hidden bg-card/80 backdrop-blur-lg border-border transition-all duration-300 will-change-transform h-full flex flex-col hover:shadow-2xl hover:shadow-primary/10"
       style={{ 
         transformStyle: 'preserve-3d', 
         transition: 'transform 0.1s linear'
       }}
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent group-hover:from-primary/20 transition-all duration-300" />
-      <div
-          className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%] bg-gradient-radial from-accent/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-          style={{ transform: 'translateZ(-10px)' }}
-      />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent group-hover:from-primary/10 transition-all duration-300" />
       <CardHeader className="relative">
         <div className="aspect-video relative overflow-hidden rounded-lg">
           <Image
@@ -70,12 +77,12 @@ export default function ProjectCard({ project, index }: { project: Project; inde
           <div className="absolute inset-0 bg-black/30" />
         </div>
       </CardHeader>
-      <CardContent className="relative space-y-4 flex-grow flex flex-col">
-        <CardTitle className="text-xl font-headline text-accent">{project.title}</CardTitle>
+      <CardContent className="relative space-y-4 flex-grow flex flex-col p-4">
+        <CardTitle className="text-xl font-headline text-primary">{project.title}</CardTitle>
         <p className="text-muted-foreground flex-grow">{project.description}</p>
         <div className="flex flex-wrap gap-2 pt-4">
           {project.tech.map((t) => (
-            <Badge key={t} variant="secondary" className="bg-primary/20 text-primary-foreground border-primary/30">
+            <Badge key={t} variant="secondary">
               {t}
             </Badge>
           ))}
@@ -86,7 +93,7 @@ export default function ProjectCard({ project, index }: { project: Project; inde
 
   if (project.link) {
     return (
-      <Link href={project.link} target="_blank" rel="noopener noreferrer" className="block h-full">
+      <Link href={project.link} target="_blank" rel="noopener noreferrer" className="block h-full transition-transform duration-300 ease-in-out hover:-translate-y-1">
         <CardInner />
       </Link>
     );

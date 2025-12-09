@@ -46,7 +46,7 @@ export default function ContactSection() {
 
   return (
     <section id="contact" className="py-20">
-      <Card className="max-w-2xl mx-auto bg-card/50 backdrop-blur-sm border-primary/20">
+      <Card className="max-w-2xl mx-auto bg-card/50 backdrop-blur-sm border-border">
         <CardHeader>
           <CardTitle className="text-3xl font-headline text-center text-primary">Contact Portal</CardTitle>
         </CardHeader>
@@ -93,7 +93,7 @@ export default function ContactSection() {
                 )}
               />
               <div className="text-center">
-                <Button type="submit" size="lg" className="bg-accent text-background hover:bg-accent/90 transition-all duration-300 group">
+                <Button type="submit" size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 group">
                   Send Message <Send className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </div>

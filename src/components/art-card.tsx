@@ -30,7 +30,7 @@ export default function ArtCard({ artwork, index }: { artwork: Artwork; index: n
           100% { transform: translateY(0px); }
         }
       `}</style>
-      <Card className="overflow-hidden bg-card/30 backdrop-blur-sm border-accent/20 transition-all duration-500 hover:shadow-2xl hover:shadow-accent/10 hover:border-accent/50">
+      <Card className="overflow-hidden bg-card/30 backdrop-blur-sm border-border transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/30">
         <CardHeader className="p-0">
           <div className="aspect-[5/7] relative">
             <Image
@@ -45,7 +45,7 @@ export default function ArtCard({ artwork, index }: { artwork: Artwork; index: n
         </CardHeader>
         <CardFooter className="p-4 bg-card/50">
           <div>
-            <h3 className="font-headline text-lg font-semibold text-foreground">{artwork.title}</h3>
+            <h3 className="font-headline text-lg font-semibold text-primary">{artwork.title}</h3>
             <p className="text-sm text-muted-foreground">{artwork.description}</p>
           </div>
         </CardFooter>

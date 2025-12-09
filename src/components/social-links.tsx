@@ -25,10 +25,10 @@ export default function SocialLinks({ links }: { links: SocialLink[] }) {
         return (
           <Button
             key={social.name}
-            variant="outline"
+            variant="ghost"
             size="icon"
             asChild
-            className="text-muted-foreground hover:text-accent-foreground hover:bg-accent/20 border-border hover:border-accent transition-colors duration-300"
+            className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors duration-300"
           >
             <Link href={social.url} target="_blank" rel="noopener noreferrer" aria-label={social.name}>
               <IconComponent className="h-5 w-5" />

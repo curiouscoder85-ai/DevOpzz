@@ -67,9 +67,9 @@ export default function DeveloperSection() {
 
   return (
     <section className="space-y-12 py-12">
-      <Card className="bg-card/50 backdrop-blur-sm p-6 border-primary/20">
+      <Card className="bg-card/50 backdrop-blur-sm p-6 border-border">
         <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6">
-          <Avatar className="h-24 w-24 border-2 border-accent">
+          <Avatar className="h-24 w-24 border-2 border-primary">
             <AvatarImage src={profile.imageUrl} alt={profile.name} />
             <AvatarFallback>{profile.name.substring(0, 2)}</AvatarFallback>
           </Avatar>
