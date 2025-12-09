@@ -12,11 +12,12 @@ export const projects = [
   },
   {
     id: 'proj-2',
-    title: 'AetherFlow Data Pipeline',
-    description: 'High-throughput, real-time data processing engine for IoT applications, built with a microservices architecture.',
-    tech: ['JavaScript', 'Firebase'],
+    title: 'Web Application',
+    description: 'A web application built with PHP and HTML, demonstrating fundamental web development skills.',
+    tech: ['PHP', 'HTML'],
     imageUrl: PlaceHolderImages.find(p => p.id === 'project-2')?.imageUrl || '',
     imageHint: PlaceHolderImages.find(p => p.id === 'project-2')?.imageHint || '',
+    link: 'https://github.com/CodingIntermediate/Web_App.git',
   },
   {
     id: 'proj-3',
