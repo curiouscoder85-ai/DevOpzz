@@ -5,7 +5,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/context/theme-provider';
 
 export const metadata: Metadata = {
-  title: 'ergle_eye',
+  title: 'DevOpzz',
   description: 'The creative portfolio of a developer and artist.',
 };
 
