@@ -22,9 +22,6 @@ export default function ProjectCard({ project, index }: { project: Project; inde
     const card = cardRef.current;
     if (!card) return;
 
-    // Skip the 3D effect if the card is a link
-    if (project.link) return;
-
     const handleMouseMove = (e: MouseEvent) => {
       const { left, top, width, height } = card.getBoundingClientRect();
       const x = e.clientX - left - width / 2;
@@ -45,24 +42,22 @@ export default function ProjectCard({ project, index }: { project: Project; inde
       card.removeEventListener('mousemove', handleMouseMove);
       card.removeEventListener('mouseleave', handleMouseLeave);
     };
-  }, [project.link]);
+  }, []);
 
   const CardInner = () => (
     <Card
       ref={cardRef}
-      className="group relative overflow-hidden bg-card/30 backdrop-blur-lg border-primary/20 transition-all duration-300 will-change-transform h-full flex flex-col"
+      className="group relative overflow-hidden bg-card/30 backdrop-blur-lg border-primary/20 transition-all duration-300 will-change-transform h-full flex flex-col hover:shadow-2xl hover:shadow-accent/20"
       style={{ 
-        transformStyle: project.link ? undefined : 'preserve-3d', 
-        transition: project.link ? 'border-color 0.3s, box-shadow 0.3s' :'transform 0.1s linear'
+        transformStyle: 'preserve-3d', 
+        transition: 'transform 0.1s linear'
       }}
     >
       <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent group-hover:from-primary/20 transition-all duration-300" />
-      {!project.link && (
-        <div
-            className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%] bg-gradient-radial from-accent/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-            style={{ transform: 'translateZ(-10px)' }}
-        />
-      )}
+      <div
+          className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%] bg-gradient-radial from-accent/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+          style={{ transform: 'translateZ(-10px)' }}
+      />
       <CardHeader className="relative">
         <div className="aspect-video relative overflow-hidden rounded-lg">
           <Image
