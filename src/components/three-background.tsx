@@ -7,17 +7,16 @@ import { useEnvironment } from '@/context/environment-context';
 export default function ThreeBackground() {
   const mountRef = useRef<HTMLDivElement>(null);
   const { environmentScript } = useEnvironment();
-  const modelGroupRef = useRef<THREE.Group>();
-  const animationFrameId = useRef<number>();
 
   useEffect(() => {
     if (!mountRef.current) return;
 
     const currentMount = mountRef.current;
+    let animationFrameId: number;
 
     // Scene
     const scene = new THREE.Scene();
-
+    
     // Camera
     const camera = new THREE.PerspectiveCamera(75, currentMount.clientWidth / currentMount.clientHeight, 0.1, 1000);
     camera.position.z = 5;
@@ -46,7 +45,24 @@ export default function ThreeBackground() {
     });
     const starField = new THREE.Points(starsGeometry, starsMaterial);
     scene.add(starField);
-
+    
+    let modelGroup: THREE.Group | null = null;
+    
+    // Script execution for generated environment
+    if (environmentScript) {
+      try {
+        modelGroup = new THREE.Group();
+        // eslint-disable-next-line @typescript-eslint/no-implied-eval
+        const generatedFunction = new Function('scene', 'THREE', 'modelGroup', environmentScript);
+        generatedFunction(scene, THREE, modelGroup);
+        if (modelGroup) {
+          scene.add(modelGroup);
+        }
+      } catch (error) {
+        console.error("Error executing generated 3D script:", error);
+      }
+    }
+    
     // Mouse movement
     const mouse = new THREE.Vector2();
     const handleMouseMove = (event: MouseEvent) => {
@@ -63,11 +79,11 @@ export default function ThreeBackground() {
 
     // Animation loop
     const animate = () => {
-      animationFrameId.current = requestAnimationFrame(animate);
+      animationFrameId = requestAnimationFrame(animate);
       starField.rotation.y += 0.0001;
       starField.rotation.x += 0.0001;
-      if (modelGroupRef.current) {
-        modelGroupRef.current.rotation.y += 0.0005;
+      if (modelGroup) {
+        modelGroup.rotation.y += 0.0005;
       }
       camera.position.x += (mouse.x * 0.5 - camera.position.x) * 0.02;
       camera.position.y += (mouse.y * 0.5 - camera.position.y) * 0.02;
@@ -84,39 +100,22 @@ export default function ThreeBackground() {
       renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
     };
     window.addEventListener('resize', handleResize);
-    
-    // Script execution for generated environment
-    if (environmentScript) {
-      if (modelGroupRef.current) {
-        scene.remove(modelGroupRef.current);
-        modelGroupRef.current.clear();
-      }
-      try {
-        const modelGroup = new THREE.Group();
-        // eslint-disable-next-line @typescript-eslint/no-implied-eval
-        const generatedFunction = new Function('scene', 'THREE', 'modelGroup', environmentScript);
-        generatedFunction(scene, THREE, modelGroup);
-        scene.add(modelGroup);
-        modelGroupRef.current = modelGroup;
-      } catch (error) {
-        console.error("Error executing generated 3D script:", error);
-      }
-    }
 
     // Cleanup
     return () => {
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('scroll', handleScroll);
-      if (animationFrameId.current) {
-        cancelAnimationFrame(animationFrameId.current);
-      }
+      cancelAnimationFrame(animationFrameId);
       if (currentMount) {
         currentMount.removeChild(renderer.domElement);
       }
-      if (modelGroupRef.current) {
-        scene.remove(modelGroupRef.current);
+      if (modelGroup) {
+        scene.remove(modelGroup);
       }
+      scene.remove(starField);
+      starsGeometry.dispose();
+      starsMaterial.dispose();
     };
   }, [environmentScript]);
 
