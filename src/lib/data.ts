@@ -21,11 +21,12 @@ export const projects = [
   },
   {
     id: 'proj-3',
-    title: 'ChronoGuard Security',
-    description: 'A blockchain-based security solution for decentralized applications, ensuring data integrity and user privacy.',
-    tech: ['React', 'JavaScript'],
+    title: 'Machine Learning Programs',
+    description: 'A collection of machine learning programs and experiments.',
+    tech: ['Python'],
     imageUrl: PlaceHolderImages.find(p => p.id === 'project-3')?.imageUrl || '',
     imageHint: PlaceHolderImages.find(p => p.id === 'project-3')?.imageHint || '',
+    link: 'https://github.com/CodingIntermediate/M_L.git',
   },
 ];
 
