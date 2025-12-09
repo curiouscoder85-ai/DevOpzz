@@ -1,6 +1,5 @@
 import type {Metadata} from 'next';
 import './globals.css';
-import { EnvironmentProvider } from '@/context/environment-context';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/context/theme-provider';
 
@@ -29,10 +28,8 @@ export default function RootLayout({
             disableTransitionOnChange
             themes={['light-slate', 'dark-slate', 'light-green', 'dark-green', 'light-zinc', 'dark-zinc']}
         >
-          <EnvironmentProvider>
             {children}
             <Toaster />
-          </EnvironmentProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -1,73 +1,99 @@
-'use server';
-/**
- * @fileOverview A flow for generating 3D environments and components based on user specifications.
- *
- * - generate3DEnvironment - A function that generates personalized 3D visuals based on user input.
- * - Generate3DEnvironmentInput - The input type for the generate3DEnvironment function.
- * - Generate3DEnvironmentOutput - The return type for the generate3DEnvironment function.
- */
+'use client';
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { useEffect, useRef } from 'react';
+import * as THREE from 'three';
 
-const Generate3DEnvironmentInputSchema = z.object({
-  style: z
-    .string()
-    .describe('The desired style of the 3D environment (e.g., futuristic, minimalist).'),
-  complexity:
-    z.string().describe('The desired complexity of the 3D environment (e.g., high, low, detailed).'),
-  elements: z
-    .string()
-    .describe('Specific elements to include in the 3D environment (e.g., glowing code blocks, floating frames).'),
-});
-export type Generate3DEnvironmentInput = z.infer<typeof Generate3DEnvironmentInputSchema>;
+export default function ThreeBackground() {
+  const mountRef = useRef<HTMLDivElement>(null);
 
-const Generate3DEnvironmentOutputSchema = z.object({
-  environmentScript: z
-    .string()
-    .describe(
-      'A string of JavaScript code that uses Three.js to create a 3D scene. The script should be a function that accepts a `scene` object and adds objects to it.'
-    ),
-});
-export type Generate3DEnvironmentOutput = z.infer<typeof Generate3DEnvironmentOutputSchema>;
+  useEffect(() => {
+    if (!mountRef.current) return;
 
-export async function generate3DEnvironment(
-  input: Generate3DEnvironmentInput
-): Promise<Generate3DEnvironmentOutput> {
-  return generate3DEnvironmentFlow(input);
+    const currentMount = mountRef.current;
+    let animationFrameId: number;
+
+    // Scene
+    const scene = new THREE.Scene();
+    
+    // Camera
+    const camera = new THREE.PerspectiveCamera(75, currentMount.clientWidth / currentMount.clientHeight, 0.1, 1000);
+    camera.position.z = 5;
+
+    // Renderer
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    currentMount.appendChild(renderer.domElement);
+
+    // Starfield
+    const starsGeometry = new THREE.BufferGeometry();
+    const starsCount = 5000;
+    const posArray = new Float32Array(starsCount * 3);
+
+    for (let i = 0; i < starsCount * 3; i++) {
+      posArray[i] = (Math.random() - 0.5) * 200;
+    }
+
+    starsGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+    const starsMaterial = new THREE.PointsMaterial({
+      size: 0.05,
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.5,
+    });
+    const starField = new THREE.Points(starsGeometry, starsMaterial);
+    scene.add(starField);
+    
+    // Mouse movement
+    const mouse = new THREE.Vector2();
+    const handleMouseMove = (event: MouseEvent) => {
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+
+    // Scroll movement
+    const handleScroll = () => {
+        camera.position.z = 5 + window.scrollY * 0.005;
+    }
+    window.addEventListener('scroll', handleScroll);
+
+    // Animation loop
+    const animate = () => {
+      animationFrameId = requestAnimationFrame(animate);
+      starField.rotation.y += 0.0001;
+      starField.rotation.x += 0.0001;
+      
+      camera.position.x += (mouse.x * 0.5 - camera.position.x) * 0.02;
+      camera.position.y += (mouse.y * 0.5 - camera.position.y) * 0.02;
+      camera.lookAt(scene.position);
+      renderer.render(scene, camera);
+    };
+    animate();
+
+    // Handle resize
+    const handleResize = () => {
+      if (!currentMount) return;
+      camera.aspect = currentMount.clientWidth / currentMount.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
+    };
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('scroll', handleScroll);
+      cancelAnimationFrame(animationFrameId);
+      if (currentMount) {
+        currentMount.removeChild(renderer.domElement);
+      }
+      scene.remove(starField);
+      starsGeometry.dispose();
+      starsMaterial.dispose();
+    };
+  }, []);
+
+  return <div ref={mountRef} className="fixed top-0 left-0 w-full h-full -z-10" />;
 }
-
-const prompt = ai.definePrompt({
-  name: 'generate3DEnvironmentPrompt',
-  input: {schema: Generate3DEnvironmentInputSchema},
-  output: {schema: Generate3DEnvironmentOutputSchema},
-  prompt: `You are a 3D environment generation expert specializing in Three.js. Based on the user's preferences for style, complexity, and elements, generate a JavaScript function body that populates a Three.js scene.
-
-  The function you generate will be executed in an environment where a THREE.Scene object named 'scene' is available. You should not create the scene or renderer. Your script should only add objects to the existing 'scene'.
-
-  Do not include the function definition, just the body of the function. For example:
-  const geometry = new THREE.BoxGeometry(1, 1, 1);
-  const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-  const cube = new THREE.Mesh(geometry, material);
-  scene.add(cube);
-
-  User Preferences:
-  - Style: {{{style}}}
-  - Complexity: {{{complexity}}}
-  - Elements: {{{elements}}}
-
-  Return only the JavaScript code for the scene.
-  `,
-});
-
-const generate3DEnvironmentFlow = ai.defineFlow(
-  {
-    name: 'generate3DEnvironmentFlow',
-    inputSchema: Generate3DEnvironmentInputSchema,
-    outputSchema: Generate3DEnvironmentOutputSchema,
-  },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
-  }
-);

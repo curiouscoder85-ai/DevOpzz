@@ -2,11 +2,9 @@
 
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import { useEnvironment } from '@/context/environment-context';
 
 export default function ThreeBackground() {
   const mountRef = useRef<HTMLDivElement>(null);
-  const { environmentScript } = useEnvironment();
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -46,23 +44,6 @@ export default function ThreeBackground() {
     const starField = new THREE.Points(starsGeometry, starsMaterial);
     scene.add(starField);
     
-    let modelGroup: THREE.Group | null = null;
-    
-    // Script execution for generated environment
-    if (environmentScript) {
-      try {
-        modelGroup = new THREE.Group();
-        // eslint-disable-next-line @typescript-eslint/no-implied-eval
-        const generatedFunction = new Function('scene', 'THREE', 'modelGroup', environmentScript);
-        generatedFunction(scene, THREE, modelGroup);
-        if (modelGroup) {
-          scene.add(modelGroup);
-        }
-      } catch (error) {
-        console.error("Error executing generated 3D script:", error);
-      }
-    }
-    
     // Mouse movement
     const mouse = new THREE.Vector2();
     const handleMouseMove = (event: MouseEvent) => {
@@ -82,9 +63,7 @@ export default function ThreeBackground() {
       animationFrameId = requestAnimationFrame(animate);
       starField.rotation.y += 0.0001;
       starField.rotation.x += 0.0001;
-      if (modelGroup) {
-        modelGroup.rotation.y += 0.0005;
-      }
+      
       camera.position.x += (mouse.x * 0.5 - camera.position.x) * 0.02;
       camera.position.y += (mouse.y * 0.5 - camera.position.y) * 0.02;
       camera.lookAt(scene.position);
@@ -110,14 +89,11 @@ export default function ThreeBackground() {
       if (currentMount) {
         currentMount.removeChild(renderer.domElement);
       }
-      if (modelGroup) {
-        scene.remove(modelGroup);
-      }
       scene.remove(starField);
       starsGeometry.dispose();
       starsMaterial.dispose();
     };
-  }, [environmentScript]);
+  }, []);
 
   return <div ref={mountRef} className="fixed top-0 left-0 w-full h-full -z-10" />;
 }
