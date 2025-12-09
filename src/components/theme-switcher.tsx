@@ -18,15 +18,14 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 export function ThemeSwitcher() {
-  const { setTheme, theme, themes } = useTheme();
+  const { setTheme, theme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
     setMounted(true);
   }, []);
 
-  const handleThemeChange = (newTheme: string, color: string) => {
-    // a theme is composed of light/dark and a color, e.g. "light-green"
+  const handleColorChange = (color: string) => {
     const currentMode = theme?.startsWith('dark') ? 'dark' : 'light';
     setTheme(`${currentMode}-${color}`);
   }
@@ -71,9 +70,9 @@ export function ThemeSwitcher() {
             </DropdownMenuSubTrigger>
             <DropdownMenuPortal>
                 <DropdownMenuSubContent>
-                    <DropdownMenuItem onClick={() => handleThemeChange(theme || 'light', 'slate')}>Slate</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleThemeChange(theme || 'light', 'green')}>Green</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleThemeChange(theme || 'light', 'zinc')}>Zinc</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleColorChange('slate')}>Slate</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleColorChange('green')}>Green</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleColorChange('zinc')}>Zinc</DropdownMenuItem>
                 </DropdownMenuSubContent>
             </DropdownMenuPortal>
         </DropdownMenuSub>

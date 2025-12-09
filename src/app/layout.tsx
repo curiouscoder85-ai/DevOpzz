@@ -27,6 +27,7 @@ export default function RootLayout({
             defaultTheme="system"
             enableSystem
             disableTransitionOnChange
+            themes={['light-slate', 'dark-slate', 'light-green', 'dark-green', 'light-zinc', 'dark-zinc']}
         >
           <EnvironmentProvider>
             {children}
