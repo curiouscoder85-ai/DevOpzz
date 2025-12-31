@@ -62,7 +62,7 @@ export const artworks = [
 ];
 
 export const profile = {
-  name: "Pranav S Prasad",
+  name: "DevOpzz",
   bio: "",
   imageUrl: PlaceHolderImages.find(p => p.id === 'profile-picture')?.imageUrl || '',
   imageHint: PlaceHolderImages.find(p => p.id === 'profile-picture')?.imageHint || '',
