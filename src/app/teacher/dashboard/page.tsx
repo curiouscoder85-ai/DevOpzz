@@ -2,13 +2,14 @@
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useUser } from "@/firebase/auth/use-user";
-import { useCollection } from "@/firebase/firestore/use-collection";
+import { useUser } from "@/hooks/use-user";
+import { useCollection } from "@/hooks/use-collection";
 import { type Course } from "@/lib/schemas/course";
 import { type Enrollment } from "@/lib/schemas/enrollment";
-import { Users, BookOpen, CheckCircle } from "lucide-react";
+import { Users, BookOpen } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function StatCard({ title, value, icon: Icon, description, isLoading }: { title: string, value: string | number, icon: React.ElementType, description: string, isLoading?: boolean }) {
   return (
@@ -18,7 +19,7 @@ function StatCard({ title, value, icon: Icon, description, isLoading }: { title:
         <Icon className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent>
-        {isLoading ? <div className="h-8 w-1/2 animate-pulse rounded-md bg-muted" /> : <div className="text-2xl font-bold">{value}</div>}
+        {isLoading ? <Skeleton className="h-8 w-1/2" /> : <div className="text-2xl font-bold">{value}</div>}
         <p className="text-xs text-muted-foreground">{description}</p>
       </CardContent>
     </Card>
@@ -32,11 +33,9 @@ export default function TeacherDashboard() {
   const courseIds = useMemo(() => teacherCourses?.map(c => c.id) || [], [teacherCourses]);
 
   const { data: enrollments, loading: enrollmentsLoading } = useCollection<Enrollment>(
-    courseIds.length > 0 ? `enrollments` : null,
+    courseIds.length > 0 ? 'enrollments' : null,
     {
-      queries: [
-        { attribute: 'courseId', operator: 'in', value: courseIds }
-      ]
+      queries: courseIds.length > 0 ? [{ attribute: 'courseId', operator: 'in', value: courseIds }] : undefined,
     }
   );
 
@@ -46,7 +45,7 @@ export default function TeacherDashboard() {
     return uniqueStudents.size;
   }, [enrollments]);
 
-  const isLoading = coursesLoading;
+  const areEnrollmentsLoading = coursesLoading || (courseIds.length > 0 && enrollmentsLoading);
 
   return (
     <div className="container mx-auto p-4 md:p-8">
@@ -58,23 +57,22 @@ export default function TeacherDashboard() {
           value={teacherCourses?.length || 0}
           icon={BookOpen}
           description="Number of courses you've created"
-          isLoading={isLoading}
+          isLoading={coursesLoading}
         />
         <StatCard
           title="Total Students"
           value={totalStudents}
           icon={Users}
           description="Across all your courses"
-          isLoading={!!(isLoading || (teacherCourses && teacherCourses.length > 0 && enrollmentsLoading))}
+          isLoading={areEnrollmentsLoading}
         />
       </div>
-      {/* Additional components like recent activity or notifications can be added here */}
 
       <div className="mt-8">
         <h2 className="text-2xl font-bold mb-4">Your Courses</h2>
-        {isLoading ? (
+        {coursesLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[1, 2, 3].map(i => <div key={i} className="h-48 animate-pulse rounded-lg bg-muted" />)}
+            {[1, 2, 3].map(i => <Skeleton key={i} className="h-48" />)}
           </div>
         ) : (teacherCourses && teacherCourses.length > 0) ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
