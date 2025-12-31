@@ -19,6 +19,9 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata: Metadata = {
   title: 'Pranav',
   description: 'The creative portfolio of a developer and artist.',
+  icons: {
+    icon: 'https://i.ibb.co/23D8qjzR/Whats-App-Image-2025-11-15-at-22-25-33-c37a1d47.jpg',
+  },
 };
 
 export default function RootLayout({
