@@ -17,7 +17,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: 'DevOpzz',
+  title: 'Pranav',
   description: 'The creative portfolio of a developer and artist.',
 };
 
